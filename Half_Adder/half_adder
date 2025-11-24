@@ -1,0 +1,40 @@
+
+--Half Adder 
+library ieee;
+use ieee.std_logic_1164.all;
+entity half_adder is
+port(
+a,b:in std_logic;
+sum,carry:out std_logic
+);
+architecture arch_half_adder of half_adder is 
+component and_gate 
+port(
+a,b:in std_logic;
+c:out std_logic
+);
+end component;
+
+component xor_gate 
+port(
+a,b:in std_logic;
+c:out std_logic
+);
+end component;
+begin 
+u0:and_gate port map(
+a=>a;
+b=>b;
+c=>carry
+);
+U1:xor_gate port map(
+a=>a;
+b=>b;
+c=>sum
+);
+end arch_half_adder;
+
+
+
+
+
