@@ -1,0 +1,52 @@
+
+ /* LCD 16*2 8 Bit mode display Hello Computer 5th */
+#include <avr/io.h>
+#define  F_CPU 16000000
+#include<util/delay.h>
+#define LCD PORTD
+#define EN 7
+#define RW 6
+#define RS 5
+
+void lcdcmd (unsigned char cmd){
+	PORTC &=~(1<<RS);
+	PORTC &=~(1<<RW);
+	LCD=cmd;
+	PORTC|=(1<<EN);
+	_delay_ms(1);
+	PORTC &=~(1<<EN);
+}
+void lcddata (unsigned char data){
+	PORTC |=(1<<RS);
+	PORTC &=~(1<<RW);
+	LCD=data;
+	PORTC|=(1<<EN);
+	_delay_ms(1);
+	PORTC &=~(1<<EN);
+}
+void lcd_init(){
+	DDRD=0XFF;
+	DDRC=0XFF;
+	PORTC&=~(1<<EN);
+	lcdcmd(0X38);//compulsory
+	lcdcmd(0X0E);//cursor
+	lcdcmd(0X01);//display screen
+	_delay_ms(2);
+	
+}
+void lcd_print(char *str){
+	unsigned char i=0;
+	while(str[i]!=0){
+		lcddata(str[i]);
+		i++;
+	}
+}
+int main(void)
+{
+	lcd_init();
+	lcd_print("Hello  Computer 5th ");
+	
+    while (1);
+	return 0;
+}
+
