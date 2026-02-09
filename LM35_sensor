@@ -1,0 +1,43 @@
+#define F_CPU 8000000UL // 8 MHz Clock
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/eeprom.h> // Library for EEPROM
+
+// Function to initialize ADC
+void ADC_Init() {
+    // AREF = AVcc, ADC channel: 0 (PA0), Right Justified
+    ADMUX = (1 << REFS0);
+    // ADC Enable and prescaler of 128
+    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+}
+
+// Function to read ADC
+uint16_t ADC_Read(uint8_t ch) {
+    ch &= 0b00000111; // Select channel 0-7
+    ADMUX = (ADMUX & 0xF8) | ch;
+    ADCSRA |= (1 << ADSC); // Start conversion
+    while (ADCSRA & (1 << ADSC)); // Wait for conversion
+    return (ADCW); // Return 10-bit result
+}
+
+int main(void) {
+    uint16_t adc_result;
+    uint8_t temperature;
+    uint16_t eeprom_address = 0x0010; // Address to store data
+
+    ADC_Init();
+
+    while (1) {
+        adc_result = ADC_Read(0); // Read PA0
+        
+        // Convert to Celsius: (ADC*5000mv/1024)/10mv per C
+        temperature = (uint8_t)((adc_result * 4.88) / 10.0);
+
+        // Write temperature to EEPROM
+        // eeprom_is_ready ensures writing is completed
+        while(!eeprom_is_ready()); 
+        eeprom_write_byte((uint8_t*)eeprom_address, temperature);
+
+        _delay_ms(1000); // Wait for 1 second
+    }
+}
