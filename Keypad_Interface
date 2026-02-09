@@ -1,0 +1,77 @@
+#include <avr/io.h>
+#define F_CPU 16000000
+#include <util/delay.h> 
+
+#define aInput PINA
+#define  bOut PORTB
+#define cSevSeg PORTC
+unsigned char display = 0x00;
+void colm1(){
+	PORTB = 0x01;
+	if(aInput==0x01){
+		display =0x80;
+	}
+	else if(aInput==0x02){
+		display =0x07;
+	}
+	else if (aInput==0x04)
+	{
+		display = 0x66;
+	}
+	else if (aInput==0x08)
+	{
+		display = 0x06;
+	}
+	cSevSeg=display;
+}
+void colm2(){
+	PORTB=0x02;
+	if(aInput==0x01){
+		display =0x3f;
+	}
+	else if(aInput==0x02){
+		display=0x7f;
+	}
+	else if (aInput==0x04)
+	{
+		display = 0x6d;
+	}
+	else if (aInput==0x08)
+	{
+		display = 0x5b;
+	}
+	cSevSeg=display;
+}
+void colm3(){
+	PORTB=0x04;
+	if(aInput==0x01){
+		display =0x76;
+	}
+	else if(aInput==0x02){
+		display=0x6f;
+	}
+	else if (aInput==0x04)
+	{
+		display = 0x7d;
+	}
+	else if (aInput==0x08)
+	{
+		display = 0x4f;
+	}
+	cSevSeg=display;
+}
+int main()
+{
+DDRA = 0x00;
+DDRB = 0x07;
+DDRC = 0xff;
+while (1)
+{
+	colm1();
+	_delay_ms(10);
+	colm2();
+	_delay_ms(10);
+	colm3();
+	_delay_ms(10);
+}	
+}
