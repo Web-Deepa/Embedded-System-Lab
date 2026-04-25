@@ -1,2 +1,3 @@
 # Embedded-System-Lab
-embedded system all codes in lab
+Embedded system all codes in lab using Atmel C
+
